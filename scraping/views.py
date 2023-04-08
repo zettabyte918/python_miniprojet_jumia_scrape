@@ -13,7 +13,7 @@ def search(query):
     return soup.find_all("a", class_="itm")
 
 
-def smartPhoneList(query):
+def productsList(query):
 
     products = []
     params = {
@@ -49,8 +49,12 @@ def smartPhoneList(query):
 
 
 def Smartphones(request):
-    # get jumia page data
-    query = request.get("search")
-    data = smartPhoneList(query)
+    # get query params (search)
+    query = request.GET.get('search')
 
-    return render(request, 'smartphones.html', {'products': data})
+    # init empty data if query is not set otherwser fill it with products from jumia by query
+    data = []
+    if (query):
+        data = productsList(query)
+
+    return render(request, 'smartphones.html', {'products': data, "query": query})

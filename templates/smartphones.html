@@ -30,11 +30,8 @@
           </button>
         </div>
       </div>
-      <div>
-        <form class="mt-4">
-          <label for="email" class="block text-sm font-medium text-gray-700"
-            >Search on jumia.tn</label
-          >
+      <div class="flex items-center">
+        <form class="mt-4 w-80" method="get">
           <div class="mt-1 flex rounded-md shadow-sm">
             <div
               class="relative flex flex-grow items-stretch focus-within:z-10"
@@ -57,9 +54,10 @@
                 </svg>
               </div>
               <input
-                type="email"
-                name="email"
-                id="email"
+                type="text"
+                name="search"
+                value="{{query}}"
+                id="search"
                 class="block w-full rounded-none rounded-l-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 placeholder="Search"
               />
@@ -112,7 +110,7 @@
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
-                  {% for product in products %}
+                  {% if products|length > 0 %} {% for product in products %}
                   <tr class="hover:bg-indigo-100">
                     <td
                       class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-6"
@@ -130,9 +128,15 @@
                       {%endif%}
                     </td>
                     <td
-                      class="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900"
+                      class="whitespace-nowrap items-center flex px-2 py-2 text-sm font-medium text-gray-900"
                     >
-                      {{product.name}}
+                      <img
+                        width="70px"
+                        style="margin-right: 50px"
+                        class="rounded-lg"
+                        src="{{product.image}}"
+                      />
+                      <span> {{product.name}} </span>
                     </td>
                     {% if product.sale == 0 %}
                     <td
@@ -167,9 +171,37 @@
                       >
                     </td>
                   </tr>
-                  {% endfor %}
+                  {% endfor %} {% else %}
+                  <tr>
+                    <td colspan="4" class="py-10">
+                      <!-- This example requires Tailwind CSS v2.0+ -->
+                      <div class="text-center">
+                        <svg
+                          class="mx-auto h-12 w-12 text-gray-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            vector-effect="non-scaling-stroke"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
+                          />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">
+                          No products
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-500">
+                          Get started by search for new products.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
 
-                  <!-- More transactions... -->
+                  {% endif %}
                 </tbody>
               </table>
             </div>
