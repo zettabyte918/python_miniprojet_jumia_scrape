@@ -30,54 +30,110 @@
           </button>
         </div>
       </div>
-      <div class="flex items-center">
-        <form class="mt-4 w-80" method="get">
-          <div class="mt-1 flex rounded-md shadow-sm">
-            <div
-              class="relative flex flex-grow items-stretch focus-within:z-10"
-            >
+      <form class="w-full" method="get">
+        <div class="sm:flex mt-4 sm:items-center">
+          <div class="sm:flex-auto">
+            <div class="flex space-x-2 rounded-md">
               <div
-                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+                class="relative flex flex-grow items-stretch focus-within:z-10"
               >
-                <!-- Heroicon name: solid/users -->
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  class="h-5 w-5 text-gray-400"
+                <div
+                  class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
                 >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+                  <!-- Heroicon name: solid/users -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="h-5 w-5 text-gray-400"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  name="search"
+                  value="{{query}}"
+                  id="search"
+                  class="block w-full rounded-none rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  placeholder="Search"
+                />
               </div>
-              <input
-                type="text"
-                name="search"
-                value="{{query}}"
-                id="search"
-                class="block w-full rounded-none rounded-l-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                placeholder="Search"
-              />
+              <div class="flex w-80 rounded-md shadow-sm">
+                <div
+                  class="relative flex flex-grow items-stretch focus-within:z-10"
+                >
+                  <div class="flex rounded-md shadow-sm">
+                    <span
+                      class="inline-flex justify-center items-center px-3 w-28 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm"
+                    >
+                      Min price
+                    </span>
+                    <input
+                      type="text"
+                      name="min_price"
+                      value="{{min_price}}"
+                      id="min_price"
+                      class="block w-full rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      placeholder="min price"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="flex rounded-md shadow-sm">
+                <div
+                  class="relative flex flex-grow items-stretch focus-within:z-10"
+                >
+                  <div class="flex rounded-md shadow-sm">
+                    <span
+                      class="inline-flex justify-center items-center px-3 w-28 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm"
+                    >
+                      Max price
+                    </span>
+                    <input
+                      type="text"
+                      name="max_price"
+                      value="{{max_price}}"
+                      id="max_price"
+                      class="block w-full rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                      placeholder="max price"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
+          <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
             <button
               type="submit"
-              class="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              class="relative -ml-px inline-flex items-center space-x-2 rounded-md border border-gray-300 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             >
               <!-- Heroicon name: solid/sort-ascending -->
 
               <span>Search</span>
             </button>
           </div>
-        </form>
+        </div>
+      </form>
+      <div class="flex pt-2 items-center space-x-2">
+        <div
+          class="py-.0.5 rounded-md bg-indigo-600 px-2 font-medium text-gray-50"
+        >
+          {{products | length}} products
+        </div>
+        <div
+          class="py-.0.5 rounded-md bg-indigo-600 px-2 font-medium text-gray-50"
+        >
+          {{time_taken}} seconds
+        </div>
       </div>
       <div class="mt-8 flex flex-col">
-        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div
-            class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
-          >
+        <div class="-mx-2 px-0.5 -my-2 overflow-x-auto">
+          <div class="inline-block min-w-full py-2 align-middle">
             <div
               class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
             >
@@ -136,23 +192,41 @@
                         class="rounded-lg"
                         src="{{product.image}}"
                       />
-                      <span> {{product.name}} </span>
+                      <div class="flex space-x-1 items-center">
+                        <span> {{product.name}} </span>
+                        {% if product.officiel == 1 %}
+
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                          class="w-5 h-5 text-indigo-600"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+
+                        {% else %} {% endif %}
+                      </div>
                     </td>
                     {% if product.sale == 0 %}
                     <td
                       class="whitespace-nowrap font-medium px-2 py-2 text-sm text-gray-900"
                     >
-                      {{product.new_price}}
+                      {{product.new_price}}0 TND
                     </td>
                     {% else %}
                     <td
                       class="whitespace-nowrap px-2 py-2 text-sm text-gray-900"
                     >
                       <span class="text-red-500 font-medium"
-                        >{{product.old_price}}</span
+                        >{{product.old_price}}0 TND</span
                       >
                       <span class="text-green-500 font-medium"
-                        >{{product.new_price}}</span
+                        >{{product.new_price}}0 TND</span
                       >
                       <span
                         class="bg-indigo-600 text-gray-50 font-medium px-2 py-0.5 rounded-md"
