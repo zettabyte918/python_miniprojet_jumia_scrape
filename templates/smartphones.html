@@ -22,12 +22,27 @@
           </p>
         </div>
         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+          {% if products|length > 0 %}
+          <form action="{% url 'export_to_excel' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="products_df" value="{{ products }}" />
+            <input type="hidden" name="query" value="{{ query }}" />
+            <button
+              type="submit"
+              class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
+            >
+              Export to Excel
+            </button>
+          </form>
+          {% else %}
           <button
-            type="button"
-            class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
+            type="submit"
+            disabled
+            class="inline-flex disabled items-center justify-center rounded-md border border-transparent bg-gray-500 px-4 py-2 text-sm font-medium text-white shadow-sm sm:w-auto"
           >
-            Export
+            Export to Excel
           </button>
+          {% endif %}
         </div>
       </div>
       <form class="w-full" method="get">
