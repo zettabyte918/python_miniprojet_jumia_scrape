@@ -65,14 +65,13 @@ def export_to_excel(request):
     products_df_json = request.POST.get("products_df")
     query = request.POST.get("query")
 
-    filename = "{}.xlsx".format(query)
+    filename = "{}.xlsx".format(query).replace(" ", "_")
 
     # remove all double quote in string then replace single quote to double quote to convert it json
     products_df_json = products_df_json.replace('"', "").replace("'", '"')
 
-    # # Deserialize the JSON string into a DataFrame
+    # Deserialize the JSON string into a DataFrame
     products_df = pd.read_json(products_df_json, orient="records")
-
     products_df = products_df.reindex(columns=columns)
 
     # Export the DataFrame to an Excel file
@@ -104,7 +103,7 @@ def productsList(query, max_price, min_price):
     products_df = pd.DataFrame(columns=columns)
 
     # Add the query from the user to fetch jumia for a specific product
-    params = {"q": query}
+    params = {"q": query, "page": "1"}
 
     # Request jumia html page
     page = requests.get("https://www.jumia.com.tn/catalog/", params=params)
@@ -161,6 +160,14 @@ def productsList(query, max_price, min_price):
             # Add current item to the products DataFrame
             item_df = pd.DataFrame([item], columns=products_df.columns)
             products_df = pd.concat([products_df, item_df], ignore_index=True)
+
+            # Convert "sale" column to numeric values
+            products_df["sale"] = (
+                products_df["sale"].replace("%", "", regex=True).astype(float)
+            )
+
+            # Sort the DataFrame by "sale" column in descending order
+            products_df = products_df.sort_values(by="sale", ascending=False)
 
     return products_df.to_dict(orient="records")
 
