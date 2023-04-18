@@ -117,6 +117,13 @@
                       class="block w-full rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                       placeholder="max price"
                     />
+                    <input
+                      type="hidden"
+                      name="page"
+                      value="1"
+                      id="page"
+                      class="block w-full rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    />
                   </div>
                 </div>
               </div>
@@ -166,7 +173,7 @@
                 {% for page in pagination %}
                 <!-- pages -->
                 <a
-                  href="/{{page.page_number}}/?search={{query}}&min_price={{min_price}}&max_price={{max_price}}"
+                  href="/?page={{page.page_number}}&search={{query}}&min_price={{min_price}}&max_price={{max_price}}"
                   aria-current="page"
                   class="relative inline-flex items-center px-4 py-2 border text-sm font-medium {% if forloop.first %} rounded-l-md {% endif %} {% if forloop.last %} rounded-r-md {% endif %} {% if page.is_current %} z-10 bg-indigo-50 border-indigo-500 text-indigo-600 {% endif %} {% if not page.is_current %} bg-white border-gray-300 text-gray-500 hover:bg-gray-50 {% endif %}"
                 >

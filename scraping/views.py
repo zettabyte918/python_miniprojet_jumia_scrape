@@ -5,6 +5,7 @@ from django.http import HttpResponse
 import time
 from bs4 import BeautifulSoup
 
+# dataframe colums
 columns = [
     "id",
     "image",
@@ -32,27 +33,6 @@ def search(query):
     page = requests.get("https://www.jumia.com.tn/fragment/suggestions/", params=params)
     soup = BeautifulSoup(page.content, "html.parser")
     return soup.find_all("a", class_="itm")
-
-
-class product:
-    id = ""
-    brand = ""
-    image = ""
-    name = ""
-    new_price = ""
-    old_price = ""
-    sale = ""
-    url = ""
-
-    def __init__(self, id, brand, image, name, new_price, old_price, sale, url):
-        self.id = id
-        self.brand = brand
-        self.image = image
-        self.name = name
-        self.new_price = new_price
-        self.old_price = old_price
-        self.sale = sale
-        self.url = url
 
 
 def export_to_excel(request):
@@ -118,7 +98,11 @@ def productsList(query, page, max_price, min_price):
     products_df = pd.DataFrame(columns=columns)
 
     # Add the query from the user to fetch jumia for a specific product, and a page
-    params = {"q": query, "page": page}
+    params = {
+        "q": query,
+        "page": page,
+        "price": (min_price or "") + "-" + (max_price or ""),
+    }
 
     # Request jumia html page
     page = requests.get(
@@ -165,20 +149,6 @@ def productsList(query, page, max_price, min_price):
             if item["old_price"]:
                 item["old_price"] = float(item["old_price"].split()[0].replace(",", ""))
 
-            # Filter products based on max_price and min_price if provided
-            if (
-                max_price is not None
-                and max_price.isnumeric()
-                and item["new_price"] > float(max_price)
-            ):
-                continue  # skip the product if price is greater than max_price
-            if (
-                min_price is not None
-                and min_price.isnumeric()
-                and item["new_price"] < float(min_price)
-            ):
-                continue  # skip the product if price is less than min_price
-
             # Add current item to the products DataFrame
             item_df = pd.DataFrame([item], columns=products_df.columns)
             products_df = pd.concat([products_df, item_df], ignore_index=True)
@@ -191,12 +161,15 @@ def productsList(query, page, max_price, min_price):
             # Sort the DataFrame by "sale" column in descending order
             products_df = products_df.sort_values(by="sale", ascending=False)
 
-    response = {"products": products_df.to_dict(orient="records"), "pages": pages}
+    response = {
+        "products": products_df.to_dict(orient="records") or [],
+        "pages": pages or [],
+    }
 
     return response
 
 
-def Smartphones(request, page):
+def Smartphones(request):
     """
     View function that handles the request for smartphones and displays the results on a template.
     Args:
@@ -208,13 +181,14 @@ def Smartphones(request, page):
     start_time = time.time()  # Capture start time
     # Get query params (search)
     query = request.GET.get("search")
+    page = request.GET.get("page") or 1
     min_price = request.GET.get("min_price")
     max_price = request.GET.get("max_price")
 
     # Initialize empty data if query is not set, otherwise fill it with products from jumia by query
     data = []
-    if query:
-        data = productsList(query, page, max_price, min_price)
+
+    data = productsList(query, page, max_price, min_price)
 
     end_time = time.time()  # Capture end time
     time_taken = float(end_time - start_time)  # Calculate time taken
@@ -226,7 +200,7 @@ def Smartphones(request, page):
         "products": data.get("products"),
         "pagination": data.get("pages") or None,
         "query": query or "",
-        "page": page or 1,
+        "page": page,
         "min_price": min_price or "",
         "max_price": max_price or "",
         "time_taken": time_taken_seconds,
