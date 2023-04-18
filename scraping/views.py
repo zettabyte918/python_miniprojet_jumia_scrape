@@ -186,7 +186,6 @@ def Smartphones(request):
     max_price = request.GET.get("max_price")
 
     # Initialize empty data if query is not set, otherwise fill it with products from jumia by query
-    data = []
 
     data = productsList(query, page, max_price, min_price)
 
