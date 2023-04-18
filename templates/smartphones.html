@@ -146,7 +146,39 @@
           {{time_taken}} seconds
         </div>
       </div>
-      <div class="mt-8 flex flex-col">
+      <div>
+        <div
+          class="bg-white pt-2 flex items-center justify-between border-gray-200"
+        >
+          <div
+            class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between"
+          >
+            <div>
+              <nav
+                class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+                aria-label="Pagination"
+              >
+                <!-- Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" -->
+
+                {% if pagination %}
+                <!-- pages -->
+
+                {% for page in pagination %}
+                <!-- pages -->
+                <a
+                  href="/{{page.page_number}}/?search={{query}}&min_price={{min_price}}&max_price={{max_price}}"
+                  aria-current="page"
+                  class="relative inline-flex items-center px-4 py-2 border text-sm font-medium {% if forloop.first %} rounded-l-md {% endif %} {% if forloop.last %} rounded-r-md {% endif %} {% if page.is_current %} z-10 bg-indigo-50 border-indigo-500 text-indigo-600 {% endif %} {% if not page.is_current %} bg-white border-gray-300 text-gray-500 hover:bg-gray-50 {% endif %}"
+                >
+                  {{page.page_number}}
+                </a>
+                {% endfor %} {% endif %}
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 flex flex-col">
         <div class="-mx-2 px-0.5 -my-2 overflow-x-auto">
           <div class="inline-block min-w-full py-2 align-middle">
             <div

@@ -20,4 +20,5 @@ from scraping import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('jumia/', include('scraping.urls')),]
+    path("", include("scraping.urls")),
+]

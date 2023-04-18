@@ -1,11 +1,9 @@
 from django.shortcuts import render
 import pandas as pd
 import requests
-from datetime import datetime
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse
 import time
 from bs4 import BeautifulSoup
-import tempfile
 
 columns = [
     "id",
@@ -91,7 +89,24 @@ def export_to_excel(request):
     return response
 
 
-def productsList(query, max_price, min_price):
+def generatePagination(pagination_html):
+    pages = []
+    if pagination_html:
+        for page in pagination_html.find_all("a"):
+            label = page.get("aria-label")
+            is_current = "_act" in page.get("class", [])  # Check for "_act" class
+            if label is not None and label.startswith("Page"):
+                page_number = label.split(" ")[1]
+                if page_number.isdigit():  # Check if page number is numeric
+                    page_info = {
+                        "page_number": page_number,
+                        "is_current": is_current,
+                    }
+                    pages.append(page_info)
+    return pages
+
+
+def productsList(query, page, max_price, min_price):
     """
     Fetches products from jumia.com.tn based on a query.
     Args:
@@ -102,14 +117,21 @@ def productsList(query, max_price, min_price):
     # Initialize an empty products DataFrame
     products_df = pd.DataFrame(columns=columns)
 
-    # Add the query from the user to fetch jumia for a specific product
-    params = {"q": query, "page": "1"}
+    # Add the query from the user to fetch jumia for a specific product, and a page
+    params = {"q": query, "page": page}
 
     # Request jumia html page
-    page = requests.get("https://www.jumia.com.tn/catalog/", params=params)
+    page = requests.get(
+        "https://www.jumia.com.tn/telephones-smartphones/", params=params
+    )
 
     # Pass the page to the BeautifulSoup library to handle it and extract information
     soup = BeautifulSoup(page.content, "html.parser")
+
+    # Extract pages from jumia pagination page URLs
+    pagination = soup.find("div", {"class": "pg-w -ptm -pbxl"})
+    pages = generatePagination(pagination)
+
     articles = soup.find_all("article", class_="prd")
 
     for article in articles:
@@ -169,10 +191,12 @@ def productsList(query, max_price, min_price):
             # Sort the DataFrame by "sale" column in descending order
             products_df = products_df.sort_values(by="sale", ascending=False)
 
-    return products_df.to_dict(orient="records")
+    response = {"products": products_df.to_dict(orient="records"), "pages": pages}
+
+    return response
 
 
-def Smartphones(request):
+def Smartphones(request, page):
     """
     View function that handles the request for smartphones and displays the results on a template.
     Args:
@@ -190,7 +214,7 @@ def Smartphones(request):
     # Initialize empty data if query is not set, otherwise fill it with products from jumia by query
     data = []
     if query:
-        data = productsList(query, max_price, min_price)
+        data = productsList(query, page, max_price, min_price)
 
     end_time = time.time()  # Capture end time
     time_taken = float(end_time - start_time)  # Calculate time taken
@@ -199,8 +223,10 @@ def Smartphones(request):
 
     # Return data to the Django template
     context = {
-        "products": data,
+        "products": data.get("products"),
+        "pagination": data.get("pages") or None,
         "query": query or "",
+        "page": page or 1,
         "min_price": min_price or "",
         "max_price": max_price or "",
         "time_taken": time_taken_seconds,
