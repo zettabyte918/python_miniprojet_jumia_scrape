@@ -204,4 +204,5 @@ def Smartphones(request):
         "max_price": max_price or "",
         "time_taken": time_taken_seconds,
     }
+
     return render(request, "smartphones.html", context)
