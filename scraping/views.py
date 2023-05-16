@@ -20,24 +20,41 @@ columns = [
 ]
 
 
-def search(query):
-    """
-    Search function that fetches suggestions from jumia.com.tn based on a query.
-    Args:
-        query (str): The query to search for.
-    Returns:
-        list: List of suggestions as BeautifulSoup objects.
-    """
-    params = {"query": query}
-    # Fetch page with suggestions using GET request with query as parameter
-    page = requests.get("https://www.jumia.com.tn/fragment/suggestions/", params=params)
-    soup = BeautifulSoup(page.content, "html.parser")
-    return soup.find_all("a", class_="itm")
+class TimeTracker:
+    def __init__(self):
+        self.start_time = None
+        self.end_time = None
+
+    def start(self):
+        self.start_time = time.time()
+
+    def stop(self):
+        self.end_time = time.time()
+
+    def get_time_taken(self):
+        time_taken = float(self.end_time - self.start_time)
+        time_taken_seconds = round(time_taken, 2)
+        return time_taken_seconds
+
+
+# def search(query):
+#     """
+#     Search function that fetches suggestions from jumia.com.tn based on a query.
+#     Args:
+#         query (str): The query to search for.
+#     Returns:
+#         list: List of suggestions as BeautifulSoup objects.
+#     """
+#     params = {"query": query}
+#     # Fetch page with suggestions using GET request with query as parameter
+#     page = requests.get("https://www.jumia.com.tn/fragment/suggestions/", params=params)
+#     soup = BeautifulSoup(page.content, "html.parser")
+#     return soup.find_all("a", class_="itm")
 
 
 def export_to_excel(request):
     """
-    Export the DataFrame to an Excel file.
+    Export the DataFrame dict to an Excel file.
     """
     # Retrieve the products_df JSON string, and the query from the request.POST dictionary
     products_df_json = request.POST.get("products_df")
@@ -178,7 +195,9 @@ def Smartphones(request):
         HttpResponse: The HTTP response object containing the rendered template with the products data.
     """
     # calculate how long the request take in seconds
-    start_time = time.time()  # Capture start time
+    timer = TimeTracker()
+    timer.start()
+
     # Get query params (search)
     query = request.GET.get("search")
     page = request.GET.get("page") or 1
@@ -188,10 +207,9 @@ def Smartphones(request):
     # Initialize empty data if query is not set, otherwise fill it with products from jumia by query
     data = productsList(query, page, max_price, min_price)
 
-    end_time = time.time()  # Capture end time
-    time_taken = float(end_time - start_time)  # Calculate time taken
-    # round it to only 2 degit after the point
-    time_taken_seconds = round(time_taken, 2)
+    # Capture time in seconds
+    timer.stop()
+    time_taken_seconds = timer.get_time_taken()
 
     # Return data to the Django template
     context = {
