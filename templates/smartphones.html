@@ -69,6 +69,11 @@
                     />
                   </svg>
                 </div>
+                <!-- <input
+                  type="hidden"
+                  name="scraped_products"
+                  value="{{ products }}"
+                /> -->
                 <input
                   type="text"
                   name="search"
@@ -147,11 +152,11 @@
         >
           {{products | length}} products
         </div>
-        <div
+        <!-- <div
           class="py-.0.5 rounded-md bg-indigo-600 px-2 font-medium text-gray-50"
         >
           {{time_taken}} seconds
-        </div>
+        </div> -->
       </div>
       <div>
         <div
@@ -293,6 +298,7 @@
                       class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
                     >
                       <a
+                        target="_blank"
                         href="https://jumia.com.tn{{product.url}}"
                         class="text-indigo-600 hover:text-indigo-900"
                         >Open</a
