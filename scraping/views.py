@@ -110,6 +110,18 @@ def generatePagination(pagination_html):
     return pages
 
 
+def getBrandNamesList():
+    # -phs -pvxs -df -d-co -h-168 -oya -sc
+    page = requests.get("https://www.jumia.com.tn/smartphones/")
+    soup = BeautifulSoup(page.content, "html.parser")
+    brands_element = soup.find("div", class_="-phs -pvxs -df -d-co -h-168 -oya -sc")
+    brands_list = brands_element.find_all("a")
+    brands = [a["data-value"] for a in brands_list]
+    cache.set("brands", brands or [])
+
+    return brands
+
+
 def getLastPage():
     page = requests.get("https://www.jumia.com.tn/smartphones/")
     soup = BeautifulSoup(page.content, "html.parser")
@@ -156,6 +168,9 @@ def productsList(query, page, max_price, min_price):
             old_price = article.find("div", class_="old")
             sale = article.find("div", class_="bdg _dsct _sm")
             officiel = article.find("div", class_="bdg _mall _xs")
+
+            if core["data-brand"] == "Sans Marque":
+                continue
 
             # Filter products by category to only add phones
             if "Phones & Tablets/Mobile Phones/Smartphones" in core["data-category"]:
@@ -218,7 +233,11 @@ def Smartphones(request):
 
     # Initialize data and fill it with products from jumia by query
     data = cache.get("scraped_data")
-    if data is None:
+    brands = cache.get("brands")
+
+    if data is None and brands is None:
+        print("{}Getting brands list:{}".format(YELLOW, END))
+        brands = getBrandNamesList()
         print("{}Start scraping jumia pages:{}".format(YELLOW, END))
         data = productsList(query, page, max_price, min_price)
 
@@ -231,9 +250,12 @@ def Smartphones(request):
     timer.stop()
     time_taken_seconds = timer.get_time_taken()
 
+    print("brands: ", brands)
+
     # Return data to the Django template
     context = {
         "products": filtered_results,
+        "brands": brands,
         "query": query or "",
         "page": page,
         "min_price": min_price or "",
@@ -253,7 +275,11 @@ def filter_products(products, brand=None, min_price=None, max_price=None):
 
     for product in products:
         # Check if brand matches the filter
-        if brand and product["brand"].lower() != brand.lower():
+        if (
+            brand
+            and brand.lower() not in product["name"].lower()
+            and brand.lower() not in product["brand"].lower()
+        ):
             continue
 
         # Check if price falls within the specified range
